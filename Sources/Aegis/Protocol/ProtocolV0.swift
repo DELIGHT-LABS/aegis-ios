@@ -14,10 +14,11 @@ enum PackError: Error {
 
 let version0 = 0
 
-class VersionV0: Protocol {}
+class ProtocolV0: Protocol {
+}
 
-extension VersionV0 {
-    func getVersion() -> Version {
+extension ProtocolV0 {
+    func getVersion() -> ProtocolVersion {
         return .V0
     }
     

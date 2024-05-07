@@ -5,33 +5,20 @@ import Foundation
 
 typealias payload = Data
 
-enum ProtocolVersion: Codable {
-    case v0
-    case v1
-    case unspecified
-}
-
-enum CipherVersion {
-    case unspecified
-    case v1
-}
-
 class Aegis {
-    var payloads: [Data]?
+    var payloads: [payload]
     let threshold: UInt8?
     let total: UInt8?
     
-    init(payloads: [Data]? = nil, threshold: UInt8?, total: UInt8?) {
-        self.payloads = payloads
+    init(threshold: UInt8, total: UInt8) {
         self.threshold = threshold
         self.total = total
+        self.payloads = []
     }
 }
 
 extension Aegis {
-    static let NUM_MINIMUM_SHARE = 1
-    
-    func dealShares(pVersion: ProtocolVersion,
+    static func dealShares(pVersion: ProtocolVersion,
                     cVersion: CipherVersion,
                     algorithm: Algorithm,
                     threshold: UInt8,
@@ -40,12 +27,12 @@ extension Aegis {
                     password: Data) throws -> Aegis {
         let aegis = Aegis(threshold: threshold, total: total)
         
-        if threshold < Aegis.NUM_MINIMUM_SHARE {
+        if threshold < numMinimumShares {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "too low threshold"])
         }
         
         // Encrypt
-        let encrypted = try? encrypt(cVersion: cVersion, secret: secret, password: password)
+        let encrypted = try? Encrypt(version: cVersion, plainText: secret, password: password)
         
         // Deal
         let algo = try? algorithm.new()
@@ -64,7 +51,7 @@ extension Aegis {
         // Pack
         shares?.forEach { share in
             let packed = try? pack(version: pVersion, v: share)
-            aegis.payloads?.append(packed ?? Data())
+            aegis.payloads.append(packed ?? Data())
         }
         
         return aegis
@@ -72,7 +59,7 @@ extension Aegis {
     
     func combineShares(password: Data) throws -> Secret {
         // Pre-verification
-        if ((payloads?.isEmpty) != nil) || (payloads?.count ?? 0 < Aegis.NUM_MINIMUM_SHARE) {
+        if (payloads.isEmpty || payloads.count < numMinimumShares) {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "not enough shares"])
         }
         
@@ -80,10 +67,9 @@ extension Aegis {
         var algorithm = Algorithm.unspecified
         
         var shares = [Share]()
-        guard let payloads else { return Secret() }
         
         for payload in payloads {
-            guard let share = try? unpack(payload) as? Share else {
+            guard let share = try? unpack(packet: payload) as? Share else {
                 throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Protocol argument mismatch"])
             }
             
@@ -101,47 +87,6 @@ extension Aegis {
         let combined = algo.combineShares(shares: shares)
         
         // Decrypt
-        return try decrypt(combined: combined, password: password)
-    }
-}
-
-extension Aegis {
-    func pack(version: ProtocolVersion, v: Any) throws -> Data {
-        var p = Payload(protocolVersion: version, packet: nil)
-        
-        var pc = try getProtocol(version: p.protocolVersion)
-        p.packet = try pc.pack(p.protocolVersion)
-        
-        guard let packet = p.packet else { return Data() }
-        
-        do {
-            let jsonData = try JSONEncoder().encode(p)
-            return jsonData
-        } catch {
-            throw error
-        }
-    }
-    
-    func unpack(_ data: Data) throws -> Any {
-        let p = try JSONDecoder().decode(Payload.self, from: data)
-        
-        let pc = try getProtocol(version: p.protocolVersion)
-        
-        do {
-            let v = try pc.unpack(p.packet ?? Data())
-            return v
-        } catch {
-            throw error
-        }
-    }
-    
-    func encrypt(cVersion: CipherVersion, secret: Secret, password: Data) throws -> Data {
-        // Encryption code goes here
-        return Data()
-    }
-    
-    func decrypt(combined: Data, password: Data) throws -> Secret {
-        // Decryption code goes here
-        return Secret()
+        return try Decrypt(cipherText: combined, password: password)
     }
 }

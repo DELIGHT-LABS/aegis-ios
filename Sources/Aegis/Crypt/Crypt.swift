@@ -25,15 +25,14 @@ extension Algorithm {
         }
     }
     
-    func newShare(content: [UInt8]) throws -> Share {
+    func newShare(content: Data) throws -> Share {
         var share: Share
         
         switch self {
         case .noCryptAlgo:
-            let newCryptShare = NewNoCryptShare(content: content)
-            share = newCryptShare
+            share = NoCryptShare(encodeData: content)
         case .tsed25519V1:
-            share = NewNoCryptShare(content: content)
+            share = newEd25519ThresholdV0Share(content: content)!
         default:
             throw CustomError.unsupportedAlgorithm
         }

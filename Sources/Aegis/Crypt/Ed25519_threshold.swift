@@ -18,21 +18,21 @@ struct Ed25519ThresholdV0Share: Codable, Share {
 }
 
 extension Ed25519ThresholdV0Share {
-    func getAlgorithm() -> String {
+    func getAlgorithm() -> Algorithm {
         return Ed25519ThresholdV0().getName()
     }
     
-    func serialize() -> [UInt8] {
+    func serialize() -> Data {
         do {
             let data = try JSONEncoder().encode(self)
-            return Array(data)
+            return data
         } catch {
             fatalError("Error encoding share: \(error)")
         }
     }
 }
 
-func newEd25519ThresholdV0Share(content: [UInt8]) -> Ed25519ThresholdV0Share? {
+func newEd25519ThresholdV0Share(content: Data) -> Ed25519ThresholdV0Share? {
     do {
         let share = try JSONDecoder().decode(Ed25519ThresholdV0Share.self, from: Data(content))
         return share
@@ -44,11 +44,12 @@ func newEd25519ThresholdV0Share(content: [UInt8]) -> Ed25519ThresholdV0Share? {
 
 let maxSecretLen = 31
 
-struct Ed25519ThresholdV0: ThresholdAlgorithm {}
+struct Ed25519ThresholdV0: ThresholdAlgorithm {
+}
 
 extension Ed25519ThresholdV0 {
-    func getName() -> String {
-        return "" // Tsed25519의 StringValue return
+    func getName() -> Algorithm {
+        return Algorithm.tsed25519V1 // Tsed25519의 StringValue return
     }
     
     func dealShares(secret: Secret, threshold: UInt8, total: UInt8) -> [Share] {
@@ -68,14 +69,14 @@ extension Ed25519ThresholdV0 {
             }
 
             let s = Array(secret[offset ..< offset + length])
-            let scalars = tsed25519.dealShares(s, threshold: threshold, total: total) // tsed25519 "gitlab.com/unit410/threshold-ed25519/pkg" 이 모듈이 필요한 것 같다
-            guard scalars.count == tsedShares.count else {
-                fatalError("Cannot enter here")
-            }
-
-            for (index, scalar) in scalars.enumerated() { // index, element 같이 추출
-                tsedShares[index].parts.append(Part(scalar: scalar, length: length))
-            }
+//            let scalars = tsed25519.dealShares(s, threshold: threshold, total: total) // tsed25519 "gitlab.com/unit410/threshold-ed25519/pkg" 이 모듈이 필요한 것 같다
+//            guard scalars.count == tsedShares.count else {
+//                fatalError("Cannot enter here")
+//            }
+//
+//            for (index, scalar) in scalars.enumerated() { // index, element 같이 추출
+//                tsedShares[index].parts.append(Part(scalar: scalar, length: length))
+//            }
 
             offset += length
         }
@@ -92,7 +93,7 @@ extension Ed25519ThresholdV0 {
         return shares
     }
     
-    func combineShares(shares: [Share], threshold: UInt8, total: UInt8) -> Secret {
-        return
+    func combineShares(shares: [any Share]) -> Secret {
+        return Data()
     }
 }

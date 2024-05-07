@@ -7,20 +7,37 @@
 
 import Foundation
 
-class VersionV1: Codable {
+class ProtocolV1: Codable, Protocol {
     var cryptAlgorithm: String
     var sharePacket: Data
-    var share: Share
+    var share: Share?
+    
+    enum CodingKeys : String, CodingKey {
+        case cryptAlgorithm = "crypto_algorithm"
+        case sharePacket = "share_packet"
+    }
+    
+    init() {
+        cryptAlgorithm = ""
+        sharePacket = Data()
+        
+    }
     
     init(cryptAlgorithm: String, sharePacket: Data, share: Share) {
         self.cryptAlgorithm = cryptAlgorithm
         self.sharePacket = sharePacket
         self.share = share
     }
+    
+    required init(from decoder:Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        cryptAlgorithm = try values.decode(String.self, forKey: .cryptAlgorithm)
+        sharePacket = try values.decode(Data.self, forKey: .sharePacket)
+    }
 }
 
-extension VersionV1 {
-    func getVersion() -> Version { .V1 }
+extension ProtocolV1 {
+    func getVersion() -> ProtocolVersion { .V1 }
     
     func pack(_ v: Any) throws -> Packet {
         guard let share = v as? Share else { throw PackError.protocolArgumentMismatch}
@@ -37,7 +54,7 @@ extension VersionV1 {
     
     func unpack(_ packet: Packet) throws -> Any {
         let jsonData = packet as? Data
-        let v1 = try? JSONDecoder().decode(VersionV1.self, from: jsonData ?? Data())
+        let v1 = try? JSONDecoder().decode(ProtocolV1.self, from: jsonData ?? Data())
         let cryptAlgorithm = v1?.cryptAlgorithm
         let sharePacket = v1?.sharePacket
         
