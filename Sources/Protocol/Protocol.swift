@@ -7,25 +7,50 @@
 
 import Foundation
 
-enum Version: String {
+enum Version: String, Codable {
     case V0 = "V0"
     case V1 = "V1"
 }
 
-typealias packet = Data
+
+typealias Packet = Data
+
+struct Payload: Codable {
+    let protocolVersion: ProtocolVersion
+    var packet: Packet?
+    
+    enum CodingKeys: String, CodingKey {
+        case protocolVersion = "protocol_version"
+        case packet
+    }
+}
+
+enum UnpackError: Error {
+    case protocolError
+    case invalidPacket
+    case invalidAlgorithm
+    case shareCreationFailed
+}
 
 protocol Protocol {
     func getVersion() -> Version
-    func pack(v: Any) throws -> (packet: Any, error: Error)
-    func unpack(packet: Any) throws -> (value: Any, error: Error)
+    func pack(_ v: Any) throws -> Data
+    func unpack(_ packet: Data) throws -> Any
 }
 
-struct Payload: Codable {
-    var protocolVersion: Version
-    var packet: Packet
+enum ProtocolError: Error {
+    case unsupportedProtocol
+}
+
+func getProtocol(version: ProtocolVersion) throws -> Protocol {
+    var pc: Protocol
     
-    private enum CodingKeys: String, CodingKey {
-        case protocolVersion = "protocol_version"
-        case packet
+    switch version {
+    case .v0:
+        return VersionV0()
+    case .v1:
+        return VersionV1()
+    default:
+        break
     }
 }

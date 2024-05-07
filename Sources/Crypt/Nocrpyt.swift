@@ -9,13 +9,13 @@ import Foundation
 
 struct NoCryptShare: Share {
     
-    var content: [UInt8]
+    var content: Data
     
-    func getAlgorithm() -> String {
+    func getAlgorithm() -> Algorithm {
         return NoCrypt().getName()
     }
     
-    func serialize() -> [UInt8] {
+    func serialize() -> Data {
         return self.content
     }
     
@@ -24,20 +24,20 @@ struct NoCryptShare: Share {
 struct NoCrypt: ThresholdAlgorithm {}
 
 extension NoCrypt {
-    func getName() -> String {
-        return
+    func getName() -> Algorithm {
+        return Algorithm.noCryptAlgo
     }
     
     func dealShares(secret: Secret, threshold: UInt8, total: UInt8) -> [Share] {
         return
     }
     
-    func combineShares(shares: [Share], threshold: UInt8, total: UInt8) -> Secret {
+    func combineShares(shares: [Share]) -> Secret {
         return
     }
 }
 
-func NewNoCryptShare(content: [UInt8]) -> NoCryptShare {
+func NewNoCryptShare(content: Data) -> NoCryptShare {
     var share = NoCryptShare(content: content)
     return share
 }

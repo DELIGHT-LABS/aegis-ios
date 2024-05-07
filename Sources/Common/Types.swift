@@ -9,7 +9,7 @@ import Foundation
 
 let numMinimumShares = 3
 
-typealias Secret = [UInt8]
+typealias Secret = Data
 
 extension Array where Element == UInt8 {
     func isEqual(to other: [UInt8]) -> Bool {
@@ -18,13 +18,14 @@ extension Array where Element == UInt8 {
 }
 
 protocol ThresholdAlgorithm {
-    func getName() -> String
+    func getName() -> Algorithm
     func dealShares(secret: Secret, threshold: UInt8, total: UInt8) -> [Share]
-    func combineShares(shares: [Share], threshold: UInt8, total: UInt8) -> Secret
+    func combineShares(shares: [Share]) -> Secret
 }
 
-protocol Share: Encodable {
-    func getAlgorithm() -> String
-    func serialize() -> [UInt8]
+protocol Share {
+    func getAlgorithm() -> Algorithm
+    func serialize() -> Data
 }
+
 
