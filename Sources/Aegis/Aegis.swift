@@ -7,12 +7,8 @@ typealias payload = Data
 
 class Aegis {
     var payloads: [payload]
-    let threshold: UInt8?
-    let total: UInt8?
     
-    init(threshold: UInt8, total: UInt8) {
-        self.threshold = threshold
-        self.total = total
+    init() {
         self.payloads = []
     }
 }
@@ -25,7 +21,7 @@ extension Aegis {
                     total: UInt8,
                     secret: Secret,
                     password: Data) throws -> Aegis {
-        let aegis = Aegis(threshold: threshold, total: total)
+        let aegis = Aegis()
         
         if threshold < numMinimumShares {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "too low threshold"])
@@ -37,7 +33,7 @@ extension Aegis {
         // Deal
         let algo = try? algorithm.new()
         
-        guard let encrypted else { return Aegis(threshold: 0, total: 0) }
+        guard let encrypted else { return Aegis() }
         
         let shares = algo?.dealShares(secret: encrypted, threshold: threshold, total: total)
         

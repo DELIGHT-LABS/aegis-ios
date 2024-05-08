@@ -16,7 +16,7 @@ final class AegisTests: XCTestCase {
             password: key
         )
         
-        let aegis2 = Aegis(threshold: 3, total: 3)
+        let aegis2 = Aegis()
         aegis2.payloads = aegis.payloads
         let combined = try aegis2.combineShares(password: key)
         XCTAssertEqual(secret, combined)
