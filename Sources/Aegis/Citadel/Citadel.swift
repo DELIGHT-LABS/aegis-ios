@@ -13,13 +13,12 @@ struct Fort {
     var url: URL
 }
 
-struct PostSecretPayload: Codable {
+struct PutSecretPayload: Codable {
     let overwrite: Bool
     let secret: String
-    let id: String
 }
 
-struct PostSecretResponse: Codable {
+struct PutSecretResponse: Codable {
     let id: String
 }
 
@@ -50,11 +49,11 @@ class Citadel {
         }
         
         let strKey = key.base64EncodedString()
-        var responses = [DataTask<PostSecretResponse>]()
+        var responses = [DataTask<PutSecretResponse>]()
         for i in 0..<payloads.count {
             let data = payloads[i].base64EncodedString()
             
-            let response = createPostSecretRequest(fort: forts[i], strKey: strKey, data: data, overwrite: true);
+            let response = createPutSecretRequest(fort: forts[i], data: data, overwrite: true);
             responses.append(response)
         }
         
@@ -75,7 +74,7 @@ class Citadel {
         
         var responses = [DataTask<GetSecretResponse>]()
         for fort in forts {
-            let response = createGetSecretRequest(fort: fort, strKey: strKey)
+            let response = createGetSecretRequest(fort: fort)
             responses.append(response)
         }
 
@@ -96,22 +95,22 @@ class Citadel {
     }
     
     @available(macOS 10.15, *)
-    private func createPostSecretRequest(fort: Fort, strKey: String, data: String, overwrite: Bool) -> DataTask<PostSecretResponse> {
-        let payload = PostSecretPayload(overwrite: overwrite, secret: data, id: strKey)
+    private func createPutSecretRequest(fort: Fort, data: String, overwrite: Bool) -> DataTask<PutSecretResponse> {
+        let payload = PutSecretPayload(overwrite: overwrite, secret: data)
         
         let headers: HTTPHeaders = [
             .authorization(bearerToken: fort.token),
             .accept("application/json")
         ]
         let url = URL(string: "\(fort.url)/api/v0/secret")!
-        let request = AF.request(url, method: .post, parameters: payload, encoder: URLEncodedFormParameterEncoder(destination: .httpBody), headers: headers) {
+        let request = AF.request(url, method: .put, parameters: payload, encoder: URLEncodedFormParameterEncoder(destination: .httpBody), headers: headers) {
             $0.timeoutInterval = 5
         }
-        return request.serializingDecodable(PostSecretResponse.self)
+        return request.serializingDecodable(PutSecretResponse.self)
     }
     
     @available(macOS 10.15, *)
-    private func createGetSecretRequest(fort: Fort, strKey: String) -> DataTask<GetSecretResponse> {
+    private func createGetSecretRequest(fort: Fort) -> DataTask<GetSecretResponse> {
         let headers: HTTPHeaders = [
             .authorization(bearerToken: fort.token),
             .accept("application/json")

@@ -18,7 +18,7 @@ final class CitadelTests: XCTestCase {
         )
         
         
-        let token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1ODhiOTZmYy03ZGFkLTRmNmQtYjczNy1iZDE2YjNmMGZmNTgiLCJzc29fcHJvdmlkZXIiOiJHb29nbGUiLCJpYXQiOjE3MTY1ODc0NjZ9.BvBltHARZwW3gDKFEw5kO1gG_89ikLUJu4Xfx5zpRY2o9j405idWq4kygiC7Iqnga4Zs7VBJF7aBRg_d6gk3Bg"
+        let token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ5b3VuZ0BkZWxpZ2h0bGFicy5pbyIsImV4cCI6MTc0Njc4NDczMCwianRpIjoiOGJmYTVkMjgtZjkxZi00YmQ3LTgxYTMtZGM4NjllYWVkNmYyIiwic3NvX3Byb3ZpZGVyIjoiR29vZ2xlIn0.ukJ0gYQsZRE8gktRtzxA6cfPH97zWzwLTmU8DODX9sOSwnLPJ0dFFssTbQm0WE-Cfl95COAAl6WwuQ6NSVEIDg"
         let urls = [
             URL(string: "http://34.124.155.209:8080")!,
             URL(string: "http://34.124.155.209:8081")!,
@@ -26,7 +26,7 @@ final class CitadelTests: XCTestCase {
         ]
         let citadel = Citadel(token: token, urls: urls)
         
-        let uuid = Data("588b96fc-7dad-4f6d-b737-bd16b3f0ff58".bytes)
+        let uuid = Data("8bfa5d28-f91f-4bd7-81a3-dc869eaed6f2".bytes)
         
         try await citadel.store(payloads: aegis.payloads, key: uuid)
         
@@ -51,7 +51,7 @@ final class CitadelTests: XCTestCase {
         )
         
         
-        let token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1ODhiOTZmYy03ZGFkLTRmNmQtYjczNy1iZDE2YjNmMGZmNTgiLCJzc29fcHJvdmlkZXIiOiJHb29nbGUiLCJpYXQiOjE3MTY1ODc0NjZ9.BvBltHARZwW3gDKFEw5kO1gG_89ikLUJu4Xfx5zpRY2o9j405idWq4kygiC7Iqnga4Zs7VBJF7aBRg_d6gk3Bg"
+        let token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ5b3VuZ0BkZWxpZ2h0bGFicy5pbyIsImV4cCI6MTc0Njc4NDczMCwianRpIjoiOGJmYTVkMjgtZjkxZi00YmQ3LTgxYTMtZGM4NjllYWVkNmYyIiwic3NvX3Byb3ZpZGVyIjoiR29vZ2xlIn0.ukJ0gYQsZRE8gktRtzxA6cfPH97zWzwLTmU8DODX9sOSwnLPJ0dFFssTbQm0WE-Cfl95COAAl6WwuQ6NSVEIDg"
         let urls = [
             URL(string: "http://34.124.155.209:8080")!,
             URL(string: "http://34.124.155.209:8081")!,
@@ -59,7 +59,7 @@ final class CitadelTests: XCTestCase {
         ]
         let citadel = Citadel(token: token, urls: urls)
         
-        let uuid = Data("588b96fc-7dad-4f6d-b737-bd16b3f0ff58".bytes)
+        let uuid = Data("8bfa5d28-f91f-4bd7-81a3-dc869eaed6f2".bytes)
         
         try await citadel.store(payloads: aegis.payloads, key: uuid)
         
