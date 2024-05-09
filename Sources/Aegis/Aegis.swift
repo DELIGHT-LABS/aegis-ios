@@ -15,32 +15,25 @@ class Aegis {
 
 extension Aegis {
     static func dealShares(pVersion: ProtocolVersion,
-                    cVersion: CipherVersion,
                     algorithm: Algorithm,
                     threshold: UInt8,
                     total: UInt8,
-                    secret: Secret,
-                    password: Data) throws -> Aegis {
+                    secret: Secret) throws -> Aegis {
         let aegis = Aegis()
         
         if threshold < numMinimumShares {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "too low threshold"])
         }
         
-        // Encrypt
-        let encrypted = try? Encrypt(version: cVersion, plainText: secret, password: password)
-        
         // Deal
         let algo = try? algorithm.new()
         
-        guard let encrypted else { return Aegis() }
-        
-        let shares = algo?.dealShares(secret: encrypted, threshold: threshold, total: total)
+        let shares = algo?.dealShares(secret: secret, threshold: threshold, total: total)
         
         // Verify
         let combined = algo?.combineShares(shares: shares ?? [Share]())
         
-        if encrypted != combined {
+        if secret != combined {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "shares verification failed"])
         }
         
@@ -53,7 +46,7 @@ extension Aegis {
         return aegis
     }
     
-    func combineShares(password: Data) throws -> Secret {
+    static func combineShares(payloads: [payload]) throws -> Secret {
         // Pre-verification
         if (payloads.isEmpty || payloads.count < numMinimumShares) {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "not enough shares"])
@@ -82,7 +75,25 @@ extension Aegis {
         let algo = try algorithm.new()
         let combined = algo.combineShares(shares: shares)
         
-        // Decrypt
-        return try Decrypt(cipherText: combined, password: password)
+        return combined
     }
+}
+
+func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data) throws -> Secret {
+    let encrypted = try CipherEncrypt(version: cVersion, plainText: secret, password: password)
+    
+    // Verify
+    let decrypted = try CipherDecrypt(cipherText: encrypted, password: password)
+    guard decrypted == secret else {
+        throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "encryption verification failed"])
+    }
+    
+    return encrypted
+}
+
+func Decrypt(secret: Secret, password: Data) throws -> Secret {
+    // Decrypt
+    let decrypted = try CipherDecrypt(cipherText: secret, password: password)
+    
+    return decrypted
 }

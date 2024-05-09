@@ -5,16 +5,16 @@ import XCTest
 final class CitadelTests: XCTestCase {
     func testCitadel() async throws {
         let secret = Data("MESSAGE_1".bytes)
-        let key = Data("01234567890123456789012345678901".bytes)
+        let password = Data("01234567890123456789012345678901".bytes)
+        
+        let encryptedSecret = try Encrypt(cVersion: CipherVersion.V1, secret: secret, password: password)
         
         let aegis = try Aegis.dealShares(
             pVersion: ProtocolVersion.V1,
-            cVersion: CipherVersion.V1,
             algorithm: Algorithm.noCryptAlgo,
             threshold: 3,
             total: 3,
-            secret: secret,
-            password: key
+            secret: encryptedSecret
         )
         
         
@@ -33,25 +33,21 @@ final class CitadelTests: XCTestCase {
         let res = await citadel.retrieve(key: uuid)
         XCTAssertEqual(3, res.count)
         
-        let aegis2 = Aegis()
-        aegis2.payloads = res
-        let msg = try aegis2.combineShares(password: key)
-        XCTAssertEqual(msg, secret)
+        let encryptedRes = try Aegis.combineShares(payloads: res)
+        let decryptedRes = try Decrypt(secret: encryptedRes, password: password)
+        XCTAssertEqual(decryptedRes, secret)
         
     }
     
     func testCitadelRetrieveError() async throws {
         let secret = Data("MESSAGE_1".bytes)
-        let key = Data("01234567890123456789012345678901".bytes)
         
         let aegis = try Aegis.dealShares(
             pVersion: ProtocolVersion.V1,
-            cVersion: CipherVersion.V1,
             algorithm: Algorithm.noCryptAlgo,
             threshold: 3,
             total: 3,
-            secret: secret,
-            password: key
+            secret: secret
         )
         
         

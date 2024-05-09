@@ -33,11 +33,24 @@ final class CipherTests: XCTestCase {
         let secret = Data("MESSAGE_1".bytes)
         
         
-        let encrypted = try Encrypt(version: CipherVersion.V1, plainText: secret, password: password)
+        let encrypted = try CipherEncrypt(version: CipherVersion.V1, plainText: secret, password: password)
         let encoded = encrypted.base64EncodedString()
         XCTAssertEqual(encoded, "VjEAAAAAAAAAAAAAAAAAAElyU3VpWFo0TDhOQ0hJRFp6TGxmNERRcXczTFBhUkM1dHN6V1k3NUZBT0E9")
         
-        let decrypted = try Decrypt(cipherText: encrypted, password: password)
+        let decrypted = try CipherDecrypt(cipherText: encrypted, password: password)
+        XCTAssertEqual(secret, decrypted)
+    }
+    
+    func testCipher_2() throws {
+        let password = Data("PASSWORD_2".bytes)
+        let secret = Data("MESSAGE_2".bytes)
+        
+        
+        let encrypted = try CipherEncrypt(version: CipherVersion.V1, plainText: secret, password: password)
+        let encoded = encrypted.base64EncodedString()
+        XCTAssertEqual(encoded, "VjEAAAAAAAAAAAAAAAAAAG9UTTRyeE9oREJsNlZEellnbFIrWGVQK3Via2pvckRNNXpIakRXYk12ZzA9")
+        
+        let decrypted = try CipherDecrypt(cipherText: encrypted, password: password)
         XCTAssertEqual(secret, decrypted)
     }
 }
