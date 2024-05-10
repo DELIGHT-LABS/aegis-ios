@@ -48,6 +48,8 @@ extension NoCrypt {
         for _ in 0..<total {
             var ncShare = NoCryptShare()
             ncShare.content = secret
+            ncShare.total = total
+            ncShare.threshold = threshold
             ncShares.append(ncShare)
         }
         
