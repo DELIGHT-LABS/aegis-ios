@@ -9,7 +9,7 @@ import Foundation
 
 let numMinimumShares = 3
 
-typealias Secret = Data
+public typealias Secret = Data
 
 extension Array where Element == UInt8 {
     func isEqual(to other: [UInt8]) -> Bool {

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ProtocolVersion: String, Codable {
+public enum ProtocolVersion: String, Codable {
     case Unspecified = "UNSPECIFIED"
     case V0 = "V0"
     case V1 = "V1"

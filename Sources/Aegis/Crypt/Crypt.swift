@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Algorithm: String {
+public enum Algorithm: String {
     case unspecified = "UNSPECIFIED"
     case noCryptAlgo = "NO_CRYPT"
     case tsed25519V1 = "TSED25519_V1"

@@ -8,7 +8,7 @@
 import Foundation
 
 
-enum CipherVersion: String {
+public enum CipherVersion: String {
     case Unspecified = "UNSPECIFIED"
     case V1 = "V1"
 }

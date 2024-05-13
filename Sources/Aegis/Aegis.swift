@@ -3,9 +3,9 @@
 
 import Foundation
 
-typealias payload = Data
+public typealias payload = Data
 
-class Aegis {
+public class Aegis {
     var payloads: [payload]
     
     init() {
@@ -14,7 +14,7 @@ class Aegis {
 }
 
 extension Aegis {
-    static func dealShares(pVersion: ProtocolVersion,
+    public static func dealShares(pVersion: ProtocolVersion,
                     algorithm: Algorithm,
                     threshold: UInt8,
                     total: UInt8,
@@ -46,7 +46,7 @@ extension Aegis {
         return aegis
     }
     
-    static func combineShares(payloads: [payload]) throws -> Secret {
+    public static func combineShares(payloads: [payload]) throws -> Secret {
         // Pre-verification
         if (payloads.isEmpty || payloads.count < numMinimumShares) {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "not enough shares"])
@@ -79,7 +79,7 @@ extension Aegis {
     }
 }
 
-func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data) throws -> Secret {
+public func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data) throws -> Secret {
     let encrypted = try CipherEncrypt(version: cVersion, plainText: secret, password: password)
     
     // Verify
@@ -91,7 +91,7 @@ func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data) throws -> 
     return encrypted
 }
 
-func Decrypt(secret: Secret, password: Data) throws -> Secret {
+public func Decrypt(secret: Secret, password: Data) throws -> Secret {
     // Decrypt
     let decrypted = try CipherDecrypt(cipherText: secret, password: password)
     
