@@ -13,41 +13,41 @@ public enum ProtocolVersion: String, Codable {
     case V1 = "V1"
 }
 
-typealias Packet = Data
+public typealias Packet = Data
 
-struct Payload: Codable {
-    var protocolVersion: ProtocolVersion
-    var packet: Packet
+public struct Payload: Codable {
+    public var protocolVersion: ProtocolVersion
+    public var packet: Packet
     
-    enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case protocolVersion = "protocol_version"
         case packet
     }
     
-    init() {
+    public init() {
         protocolVersion = ProtocolVersion.Unspecified
         packet = Data()
     }
 }
 
-enum UnpackError: Error {
+public enum UnpackError: Error {
     case protocolError
     case invalidPacket
     case invalidAlgorithm
     case shareCreationFailed
 }
 
-protocol Protocol {
+public protocol Protocol {
     func getVersion() -> ProtocolVersion
     func pack(_ v: Any) throws -> Data
     func unpack(_ packet: Data) throws -> Any
 }
 
-enum ProtocolError: Error {
+public enum ProtocolError: Error {
     case unsupportedProtocol
 }
 
-func getProtocol(version: ProtocolVersion) throws -> Protocol {
+public func getProtocol(version: ProtocolVersion) throws -> Protocol {
     switch version {
     case .V0:
         return ProtocolV0()
@@ -58,7 +58,7 @@ func getProtocol(version: ProtocolVersion) throws -> Protocol {
     }
 }
 
-func pack(version: ProtocolVersion, v: Any) throws -> Data {
+public func pack(version: ProtocolVersion, v: Any) throws -> Data {
     var p = Payload()
     p.protocolVersion = version
     
@@ -71,7 +71,7 @@ func pack(version: ProtocolVersion, v: Any) throws -> Data {
     return data
 }
 
-func unpack(packet: Data) throws -> Any {
+public func unpack(packet: Data) throws -> Any {
     let p = try JSONDecoder().decode(Payload.self, from: packet)
     
     let pc = try getProtocol(version: p.protocolVersion)

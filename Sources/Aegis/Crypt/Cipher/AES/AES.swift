@@ -1,7 +1,7 @@
 import Foundation
 import CryptoSwift
 
-let hmacLen = 16
+public let hmacLen = 16
 
 public func AESencrypt(plainText: Secret, key: Data, ivKey: Data) throws -> Data {
     // Append ivKey as HMAC

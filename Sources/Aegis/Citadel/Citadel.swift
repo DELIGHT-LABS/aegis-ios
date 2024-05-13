@@ -9,30 +9,30 @@ import Foundation
 import Alamofire
 
 public struct Fort {
-    let token: String
-    var url: URL
+    public let token: String
+    public var url: URL
 }
 
 public struct PutSecretPayload: Codable {
-    let overwrite: Bool
-    let secret: String
+    public let overwrite: Bool
+    public let secret: String
 }
 
 public struct PutSecretResponse: Codable {
-    let id: String
+    public let id: String
 }
 
 public struct ErrorResponse: Codable {
-    let error: String
-    let message: String
+    public let error: String
+    public let message: String
 }
 
 public struct GetSecretResponse: Codable {
-    let secret: String
+    public let secret: String
 }
 
 public class Citadel {
-    var forts: [Fort]
+    public var forts: [Fort]
     
     public init(token: String, urls: [URL]) {
         forts = []

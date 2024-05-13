@@ -8,6 +8,6 @@
 import Foundation
 import Blake2
 
-func Blake2b(size: Int, message: Data) throws -> Data {
+public func Blake2b(size: Int, message: Data) throws -> Data {
     return try! Blake2b.hash(size: size, data: message)
 }

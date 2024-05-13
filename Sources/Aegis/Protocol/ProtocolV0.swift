@@ -7,17 +7,16 @@
 
 import Foundation
 
-enum PackError: Error {
+public enum PackError: Error {
     case protocolArgumentMismatch
     case serializationError
 }
 
-let version0 = 0
+public let version0 = 0
 
-class ProtocolV0: Protocol {
-}
+public class ProtocolV0: Protocol {}
 
-extension ProtocolV0 {
+public extension ProtocolV0 {
     func getVersion() -> ProtocolVersion {
         return .V0
     }

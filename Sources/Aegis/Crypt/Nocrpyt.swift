@@ -8,9 +8,9 @@
 import Foundation
 
 public struct NoCryptShare: Share, Codable {
-    var total: UInt8
-    var threshold: UInt8
-    var content: Data
+    public var total: UInt8
+    public var threshold: UInt8
+    public var content: Data
     
     public init() {
         total = 0
