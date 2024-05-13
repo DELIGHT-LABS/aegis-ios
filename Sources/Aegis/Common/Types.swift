@@ -17,13 +17,13 @@ extension Array where Element == UInt8 {
     }
 }
 
-protocol ThresholdAlgorithm {
+public protocol ThresholdAlgorithm {
     func getName() -> Algorithm
     func dealShares(secret: Secret, threshold: UInt8, total: UInt8) -> [Share]
     func combineShares(shares: [Share]) -> Secret
 }
 
-protocol Share {
+public protocol Share {
     func getAlgorithm() -> Algorithm
     func serialize() -> Data
 }

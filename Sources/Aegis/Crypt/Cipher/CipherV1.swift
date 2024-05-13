@@ -8,12 +8,12 @@
 import Foundation
 import CryptoKit
 
-let aesKeyLen = 32
-let aesIvKeyLen = 16
+public let aesKeyLen = 32
+public let aesIvKeyLen = 16
 
-class CipherV1 {}
+public class CipherV1 {}
 
-extension CipherV1 {
+public extension CipherV1 {
     func encrypt(plainText: Data, password: Data) throws -> Data {
         // Prepare key
         let hashedKey = try Blake2b(size: aesKeyLen, message: password)

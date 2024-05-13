@@ -13,9 +13,9 @@ public enum CipherVersion: String {
     case V1 = "V1"
 }
 
-let versionHeaderLen = 16
+public let versionHeaderLen = 16
 
-func CipherEncrypt(version: CipherVersion, plainText: Secret, password: Data) throws -> Secret {
+public func CipherEncrypt(version: CipherVersion, plainText: Secret, password: Data) throws -> Secret {
     var encrypted: Secret
     switch version {
     case .V1:
@@ -35,7 +35,7 @@ func CipherEncrypt(version: CipherVersion, plainText: Secret, password: Data) th
 }
 
 
-func CipherDecrypt(cipherText: Secret, password: Data) throws -> Secret {
+public func CipherDecrypt(cipherText: Secret, password: Data) throws -> Secret {
 
     // Detach cipher version
     let versionData = String(bytes: cipherText[0..<versionHeaderLen], encoding: .utf8)?.replacingOccurrences(of: "\0", with: "")

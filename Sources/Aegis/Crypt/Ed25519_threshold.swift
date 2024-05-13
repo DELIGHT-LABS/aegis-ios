@@ -7,17 +7,17 @@
 
 import Foundation
 
-struct Part: Codable {
+public struct Part: Codable {
     var part: [Data]
     var length: Int
 }
 
-struct Ed25519ThresholdV0Share: Codable, Share {
+public struct Ed25519ThresholdV0Share: Codable, Share {
     var index: Int?
     var parts: [Part]?
 }
 
-extension Ed25519ThresholdV0Share {
+public extension Ed25519ThresholdV0Share {
     func getAlgorithm() -> Algorithm {
         return Ed25519ThresholdV0().getName()
     }
@@ -32,7 +32,7 @@ extension Ed25519ThresholdV0Share {
     }
 }
 
-func newEd25519ThresholdV0Share(content: Data) -> Ed25519ThresholdV0Share? {
+public func newEd25519ThresholdV0Share(content: Data) -> Ed25519ThresholdV0Share? {
     do {
         let share = try JSONDecoder().decode(Ed25519ThresholdV0Share.self, from: Data(content))
         return share
@@ -42,12 +42,11 @@ func newEd25519ThresholdV0Share(content: Data) -> Ed25519ThresholdV0Share? {
     }
 }
 
-let maxSecretLen = 31
+public let maxSecretLen = 31
 
-struct Ed25519ThresholdV0: ThresholdAlgorithm {
-}
+public struct Ed25519ThresholdV0: ThresholdAlgorithm {}
 
-extension Ed25519ThresholdV0 {
+public extension Ed25519ThresholdV0 {
     func getName() -> Algorithm {
         return Algorithm.tsed25519V1 // Tsed25519의 StringValue return
     }

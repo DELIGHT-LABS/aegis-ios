@@ -13,7 +13,7 @@ public enum Algorithm: String {
     case tsed25519V1 = "TSED25519_V1"
 }
 
-extension Algorithm {
+public extension Algorithm {
     func new() throws -> ThresholdAlgorithm {
         switch self {
         case .noCryptAlgo:
@@ -41,6 +41,6 @@ extension Algorithm {
     }
 }
 
-enum CustomError: Error {
+public enum CustomError: Error {
     case unsupportedAlgorithm
 }

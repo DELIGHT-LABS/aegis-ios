@@ -6,15 +6,15 @@ import Foundation
 public typealias payload = Data
 
 public class Aegis {
-    var payloads: [payload]
+    public var payloads: [payload]
     
-    init() {
+    public init() {
         self.payloads = []
     }
 }
 
-extension Aegis {
-    public static func dealShares(pVersion: ProtocolVersion,
+public extension Aegis {
+    static func dealShares(pVersion: ProtocolVersion,
                     algorithm: Algorithm,
                     threshold: UInt8,
                     total: UInt8,

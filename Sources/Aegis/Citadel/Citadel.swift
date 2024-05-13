@@ -8,33 +8,33 @@
 import Foundation
 import Alamofire
 
-struct Fort {
+public struct Fort {
     let token: String
     var url: URL
 }
 
-struct PutSecretPayload: Codable {
+public struct PutSecretPayload: Codable {
     let overwrite: Bool
     let secret: String
 }
 
-struct PutSecretResponse: Codable {
+public struct PutSecretResponse: Codable {
     let id: String
 }
 
-struct ErrorResponse: Codable {
+public struct ErrorResponse: Codable {
     let error: String
     let message: String
 }
 
-struct GetSecretResponse: Codable {
+public struct GetSecretResponse: Codable {
     let secret: String
 }
 
-class Citadel {
+public class Citadel {
     var forts: [Fort]
     
-    init(token: String, urls: [URL]) {
+    public init(token: String, urls: [URL]) {
         forts = []
         
         urls.forEach { url in
@@ -43,7 +43,7 @@ class Citadel {
     }
     
     @available(macOS 10.15, *)
-    func store(payloads: [Data], key: Data) async throws {
+    public func store(payloads: [Data], key: Data) async throws {
         guard payloads.count == forts.count else {
             throw NSError(domain: "citadel", code: 0, userInfo: [NSLocalizedDescriptionKey: "Payloads and Fort do not match"])
         }
@@ -69,7 +69,7 @@ class Citadel {
     }
     
     @available(macOS 10.15, *)
-    func retrieve(key: Data) async -> [payload] {
+    public func retrieve(key: Data) async -> [payload] {
         let strKey = key.base64EncodedString()
         
         var responses = [DataTask<GetSecretResponse>]()
@@ -95,7 +95,7 @@ class Citadel {
     }
     
     @available(macOS 10.15, *)
-    private func createPutSecretRequest(fort: Fort, data: String, overwrite: Bool) -> DataTask<PutSecretResponse> {
+    public func createPutSecretRequest(fort: Fort, data: String, overwrite: Bool) -> DataTask<PutSecretResponse> {
         let payload = PutSecretPayload(overwrite: overwrite, secret: data)
         
         let headers: HTTPHeaders = [
@@ -110,7 +110,7 @@ class Citadel {
     }
     
     @available(macOS 10.15, *)
-    private func createGetSecretRequest(fort: Fort) -> DataTask<GetSecretResponse> {
+    public func createGetSecretRequest(fort: Fort) -> DataTask<GetSecretResponse> {
         let headers: HTTPHeaders = [
             .authorization(bearerToken: fort.token),
             .accept("application/json")

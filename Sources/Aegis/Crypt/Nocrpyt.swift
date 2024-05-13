@@ -7,38 +7,38 @@
 
 import Foundation
 
-struct NoCryptShare: Share, Codable {
+public struct NoCryptShare: Share, Codable {
     var total: UInt8
     var threshold: UInt8
     var content: Data
     
-    init() {
+    public init() {
         total = 0
         threshold = 0
         content = Data()
     }
     
-    init(encodeData: Data) {
+    public init(encodeData: Data) {
         let share = try? JSONDecoder().decode(NoCryptShare.self, from: encodeData)
         total = share?.total ?? 0;
         threshold = share?.threshold ?? 0
         content = share?.content ?? Data()
     }
     
-    func getAlgorithm() -> Algorithm {
+    public func getAlgorithm() -> Algorithm {
         return NoCrypt().getName()
     }
     
-    func serialize() -> Data {
+    public func serialize() -> Data {
         let data = try? JSONEncoder().encode(self)
         return data!
     }
     
 }
 
-struct NoCrypt: ThresholdAlgorithm {}
+public struct NoCrypt: ThresholdAlgorithm {}
 
-extension NoCrypt {
+public extension NoCrypt {
     func getName() -> Algorithm {
         return Algorithm.noCryptAlgo
     }

@@ -3,7 +3,7 @@ import CryptoSwift
 
 let hmacLen = 16
 
-func AESencrypt(plainText: Secret, key: Data, ivKey: Data) throws -> Data {
+public func AESencrypt(plainText: Secret, key: Data, ivKey: Data) throws -> Data {
     // Append ivKey as HMAC
     let hmacText = ivKey + plainText
 
@@ -16,7 +16,7 @@ func AESencrypt(plainText: Secret, key: Data, ivKey: Data) throws -> Data {
     return Data(base64Cipher.utf8)
 }
 
-func AESdecrypt(cipherText: Data, key: Data, ivKey: Data) throws -> Data {
+public func AESdecrypt(cipherText: Data, key: Data, ivKey: Data) throws -> Data {
     let decoded = Data(base64Encoded: cipherText)!
     
     let aes = try AES(key: key.bytes, blockMode: CBC(iv: ivKey.bytes), padding: .pkcs5)
