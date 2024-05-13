@@ -35,6 +35,7 @@ final class CitadelTests: XCTestCase {
         
         let encryptedRes = try Aegis.combineShares(payloads: res)
         let decryptedRes = try Decrypt(secret: encryptedRes, password: password)
+        print(secret, decryptedRes)
         XCTAssertEqual(decryptedRes, secret)
         
     }
