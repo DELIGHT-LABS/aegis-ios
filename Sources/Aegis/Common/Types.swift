@@ -9,6 +9,8 @@ import Foundation
 
 public let numMinimumShares = 3
 
+public typealias Packet = Data
+
 public typealias Secret = Data
 
 public extension Array where Element == UInt8 {

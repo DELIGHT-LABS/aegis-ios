@@ -23,11 +23,13 @@ final class AegisTests: XCTestCase {
         
         
         let encrypted = try Encrypt(cVersion: CipherVersion.V1, secret: secret, password: password)
-        let encoded = encrypted.base64EncodedString()
-        XCTAssertEqual(encoded, "VjEAAAAAAAAAAAAAAAAAAElyU3VpWFo0TDhOQ0hJRFp6TGxmNERRcXczTFBhUkM1dHN6V1k3NUZBT0E9")
         
         let decrypted = try Decrypt(secret: encrypted, password: password)
         XCTAssertEqual(secret, decrypted)
+        
+        let decodedSecret = Data(base64Encoded: "eyJ2ZXJzaW9uIjoiVjEiLCJjaXBoZXJUZXh0IjoiU1hKVGRXbFlXalJNT0U1RFNFbEVXbnBNYkdZMFJGRnhkek5NVUdGU1F6VjBjM3BYV1RjMVJrRlBRVDA9In0=")!
+        let result = try Decrypt(secret: decodedSecret, password: password)
+        XCTAssertEqual(decrypted, result)
     }
     
     func testEncryptAndDecrypt2() throws {
@@ -36,11 +38,13 @@ final class AegisTests: XCTestCase {
         
         
         let encrypted = try Encrypt(cVersion: CipherVersion.V1, secret: secret, password: password)
-        let encoded = encrypted.base64EncodedString()
-        XCTAssertEqual(encoded, "VjEAAAAAAAAAAAAAAAAAAG9UTTRyeE9oREJsNlZEellnbFIrWGVQK3Via2pvckRNNXpIakRXYk12ZzA9")
         
         let decrypted = try Decrypt(secret: encrypted, password: password)
         XCTAssertEqual(secret, decrypted)
+        
+        let decodedSecret = Data(base64Encoded: "eyJ2ZXJzaW9uIjoiVjEiLCJjaXBoZXJUZXh0IjoiYjFSTk5ISjRUMmhFUW13MlZrUjZXV2RzVWl0WVpWQXJkV0pyYW05eVJFMDFla2hxUkZkaVRYWm5NRDA9In0=")!
+        let result = try Decrypt(secret: decodedSecret, password: password)
+        XCTAssertEqual(decrypted, result)
     }
 }
 

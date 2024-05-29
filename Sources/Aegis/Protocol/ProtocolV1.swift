@@ -65,7 +65,6 @@ public extension ProtocolV1 {
         share = try algorithm.newShare(content: sharePacket ?? Data())
         
         return share
-        
     }
     
 }

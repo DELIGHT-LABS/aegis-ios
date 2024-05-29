@@ -8,47 +8,47 @@
 import Foundation
 
 
-public enum CipherVersion: String {
+public enum CipherVersion: String, Codable {
     case Unspecified = "UNSPECIFIED"
     case V1 = "V1"
 }
 
-public let versionHeaderLen = 16
+struct CipherPacket: Codable {
+    var version: CipherVersion
+    var cipherText: Data
+    
+    init(version: CipherVersion, cipherText: Data) {
+        self.version = version
+        self.cipherText = cipherText
+    }
+}
 
 public func CipherEncrypt(version: CipherVersion, plainText: Secret, password: Data) throws -> Secret {
+    var packet: CipherPacket
+    
     var encrypted: Secret
     switch version {
     case .V1:
         let encrypter = CipherV1()
         encrypted = try encrypter.encrypt(plainText: plainText, password: password)
+        
+        packet = CipherPacket(version: CipherVersion.V1, cipherText: encrypted)
     default:
         throw NSError(domain: "cipher", code: 0,userInfo: [NSLocalizedDescriptionKey: "unsupported version"])
     }
     
-    // Append cipher version
-    var v = Secret(repeating: 0, count: versionHeaderLen)
-    let versionData = version.rawValue.data(using: .utf8)!
-    v.replaceSubrange(0..<versionData.count, with: versionData)
-    encrypted = v + encrypted
-    
-    return encrypted
+    return try JSONEncoder().encode(packet)
 }
 
 
-public func CipherDecrypt(cipherText: Secret, password: Data) throws -> Secret {
-
-    // Detach cipher version
-    let versionData = String(bytes: cipherText[0..<versionHeaderLen], encoding: .utf8)?.replacingOccurrences(of: "\0", with: "")
-    guard let version = CipherVersion(rawValue: versionData!) else {
-        throw NSError(domain: "cipher", code: 0,userInfo: [NSLocalizedDescriptionKey: "invalid version"])
-    }
+public func CipherDecrypt(packet: Packet, password: Data) throws -> Secret {
+    let cipher = try JSONDecoder().decode(CipherPacket.self, from: packet)
     
-    let encrypted = cipherText[versionHeaderLen...]
     var decrypted: Secret
-    switch version {
+    switch cipher.version {
     case .V1:
         let decrypter = CipherV1()
-        decrypted = try decrypter.decrypt(cipherText: encrypted, password: password)
+        decrypted = try decrypter.decrypt(cipherText: cipher.cipherText, password: password)
     default:
         throw NSError(domain: "cipher", code: 0,userInfo: [NSLocalizedDescriptionKey: "unsupported version"])
     }

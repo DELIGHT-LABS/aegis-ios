@@ -13,8 +13,6 @@ public enum ProtocolVersion: String, Codable {
     case V1 = "V1"
 }
 
-public typealias Packet = Data
-
 public struct Payload: Codable {
     public var protocolVersion: ProtocolVersion
     public var packet: Packet
@@ -39,8 +37,8 @@ public enum UnpackError: Error {
 
 public protocol Protocol {
     func getVersion() -> ProtocolVersion
-    func pack(_ v: Any) throws -> Data
-    func unpack(_ packet: Data) throws -> Any
+    func pack(_ v: Any) throws -> Packet
+    func unpack(_ packet: Packet) throws -> Any
 }
 
 public enum ProtocolError: Error {

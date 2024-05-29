@@ -46,7 +46,7 @@ public extension Aegis {
         return aegis
     }
     
-    public static func combineShares(payloads: [payload]) throws -> Secret {
+    static func combineShares(payloads: [payload]) throws -> Secret {
         // Pre-verification
         if (payloads.isEmpty || payloads.count < numMinimumShares) {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "not enough shares"])
@@ -79,11 +79,11 @@ public extension Aegis {
     }
 }
 
-public func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data) throws -> Secret {
+public func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data) throws -> Packet {
     let encrypted = try CipherEncrypt(version: cVersion, plainText: secret, password: password)
     
     // Verify
-    let decrypted = try CipherDecrypt(cipherText: encrypted, password: password)
+    let decrypted = try CipherDecrypt(packet: encrypted, password: password)
     guard decrypted == secret else {
         throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "encryption verification failed"])
     }
@@ -91,9 +91,9 @@ public func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data) thr
     return encrypted
 }
 
-public func Decrypt(secret: Secret, password: Data) throws -> Secret {
+public func Decrypt(secret: Packet, password: Data) throws -> Secret {
     // Decrypt
-    let decrypted = try CipherDecrypt(cipherText: secret, password: password)
+    let decrypted = try CipherDecrypt(packet: secret, password: password)
     
     return decrypted
 }
