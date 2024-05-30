@@ -7,32 +7,29 @@
 
 import Foundation
 import CryptoKit
+import CryptoSwift
 
 public let aesKeyLen = 32
 public let aesIvKeyLen = 16
 
 public class CipherV1 {}
 
+@available(macOS 10.15, *)
 public extension CipherV1 {
-    func encrypt(plainText: Data, password: Data) throws -> Data {
+    func encrypt(plainText: Data, password: Data, salt: Data) throws -> Secret {
         // Prepare key
-        let hashedKey = try Blake2b(size: aesKeyLen, message: password)
-        
-        // Prepare IvKey
-        let ivKey = try Blake2b(size: aesIvKeyLen, message: password)
+        let hashedKey = try Blake2b(size: aesKeyLen, message: password + salt)
         
         // Encrypt
-        return try AESencrypt(plainText: plainText, key: hashedKey, ivKey: ivKey)
+        let encrypted = try AESencryptGCM(plainText: plainText, key: hashedKey)
+        
+        return encrypted
     }
     
-    func decrypt(cipherText: Data, password: Data) throws -> Data {
+    func decrypt(cipherText: Data, password: Data, salt: Data) throws -> Secret {
         // Prepare key
-        let hashedKey = try Blake2b(size: aesKeyLen, message: password)
-        
-        // Prepare IvKey
-        let ivKey = try Blake2b(size: aesIvKeyLen, message: password)
-        
+        let hashedKey = try Blake2b(size: aesKeyLen, message: password + salt)
         // Encrypt
-        return try AESdecrypt(cipherText: cipherText, key: hashedKey, ivKey: ivKey)
+        return try! AESdecryptGCM(cipherText: cipherText, key: hashedKey)
     }
 }

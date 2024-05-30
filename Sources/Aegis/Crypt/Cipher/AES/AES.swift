@@ -1,26 +1,19 @@
 import Foundation
-import CryptoSwift
+import CryptoKit
 
 public let hmacLen = 16
 
-public func AESencrypt(plainText: Secret, key: Data, ivKey: Data) throws -> Data {
-    // Append ivKey as HMAC
-    let hmacText = ivKey + plainText
-
-    let aes = try AES(key: key.bytes, blockMode: CBC(iv: ivKey.bytes), padding: .pkcs7)
-    let encryptedBytes = try aes.encrypt(hmacText.bytes)
-
-    // Base64 encoding
-    let base64Cipher = encryptedBytes.toBase64()
-
-    return Data(base64Cipher.utf8)
+@available(macOS 10.15, *)
+public func AESencryptGCM(plainText: Secret, key: Data) throws -> Data {
+    let sealed = try! AES.GCM.seal(plainText, using: SymmetricKey(data: key))
+    let encrypted = sealed.combined!
+    return encrypted.base64EncodedData()
 }
 
-public func AESdecrypt(cipherText: Data, key: Data, ivKey: Data) throws -> Data {
+@available(macOS 10.15, *)
+public func AESdecryptGCM(cipherText: Data, key: Data) throws -> Data {
     let decoded = Data(base64Encoded: cipherText)!
-    
-    let aes = try AES(key: key.bytes, blockMode: CBC(iv: ivKey.bytes), padding: .pkcs5)
-    let decryptBytes = try aes.decrypt(decoded.bytes)
-
-    return Data(decryptBytes[hmacLen...(decryptBytes.count - 1)])
+    let sealedBox = try! AES.GCM.SealedBox(combined: decoded)
+    let decrypted = try! AES.GCM.open(sealedBox, using: SymmetricKey(data: key))
+    return decrypted
 }

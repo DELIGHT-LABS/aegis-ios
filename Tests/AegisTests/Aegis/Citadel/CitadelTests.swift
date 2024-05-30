@@ -6,8 +6,9 @@ final class CitadelTests: XCTestCase {
     func testCitadel() async throws {
         let secret = Data("MESSAGE_1".bytes)
         let password = Data("01234567890123456789012345678901".bytes)
+        let salt = Data("SALT_1".bytes)
         
-        let encryptedSecret = try Encrypt(cVersion: CipherVersion.V1, secret: secret, password: password)
+        let encryptedSecret = try Encrypt(cVersion: CipherVersion.V1, secret: secret, password: password, salt: salt)
         
         let aegis = try Aegis.dealShares(
             pVersion: ProtocolVersion.V1,
@@ -34,7 +35,7 @@ final class CitadelTests: XCTestCase {
         XCTAssertEqual(3, res.count)
         
         let encryptedRes = try Aegis.combineShares(payloads: res)
-        let decryptedRes = try Decrypt(secret: encryptedRes, password: password)
+        let decryptedRes = try Decrypt(secret: encryptedRes, password: password, salt: salt)
         print(secret, decryptedRes)
         XCTAssertEqual(decryptedRes, secret)
         

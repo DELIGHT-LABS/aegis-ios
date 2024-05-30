@@ -79,11 +79,12 @@ public extension Aegis {
     }
 }
 
-public func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data) throws -> Packet {
-    let encrypted = try CipherEncrypt(version: cVersion, plainText: secret, password: password)
+@available(macOS 10.15, *)
+public func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data, salt: Data) throws -> Packet {
+    let encrypted = try CipherEncrypt(version: cVersion, plainText: secret, password: password, salt: salt)
     
     // Verify
-    let decrypted = try CipherDecrypt(packet: encrypted, password: password)
+    let decrypted = try CipherDecrypt(packet: encrypted, password: password, salt: salt)
     guard decrypted == secret else {
         throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "encryption verification failed"])
     }
@@ -91,9 +92,10 @@ public func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data) thr
     return encrypted
 }
 
-public func Decrypt(secret: Packet, password: Data) throws -> Secret {
+@available(macOS 10.15, *)
+public func Decrypt(secret: Packet, password: Data, salt: Data) throws -> Secret {
     // Decrypt
-    let decrypted = try CipherDecrypt(packet: secret, password: password)
+    let decrypted = try CipherDecrypt(packet: secret, password: password, salt: salt)
     
     return decrypted
 }
