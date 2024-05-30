@@ -2,6 +2,17 @@ import Foundation
 import XCTest
 @testable import Aegis
 
+struct TestAegisSecret: Codable {
+    var wallet: [TestWallet]
+}
+
+struct TestWallet: Codable {
+    var address: String
+    var name: String
+    var publicKey: String
+    var encrypted: String
+}
+
 final class CitadelTests: XCTestCase {
     func testCitadel() async throws {
         let secret = Data("MESSAGE_1".bytes)
@@ -10,12 +21,16 @@ final class CitadelTests: XCTestCase {
         
         let encryptedSecret = try Encrypt(cVersion: CipherVersion.V1, secret: secret, password: password, salt: salt)
         
+        let wallet = TestWallet(address: "xpla1xxxx", name: "name1", publicKey: "publicKey1", encrypted: encryptedSecret)
+        let aegisSecretData = TestAegisSecret(wallet: [wallet])
+        let encodedAegisSecretData = try JSONEncoder().encode(aegisSecretData)
+        
         let aegis = try Aegis.dealShares(
             pVersion: ProtocolVersion.V1,
             algorithm: Algorithm.noCryptAlgo,
             threshold: 3,
             total: 3,
-            secret: encryptedSecret
+            secret: encodedAegisSecretData
         )
         
         
@@ -35,8 +50,10 @@ final class CitadelTests: XCTestCase {
         XCTAssertEqual(3, res.count)
         
         let encryptedRes = try Aegis.combineShares(payloads: res)
-        let decryptedRes = try Decrypt(secret: encryptedRes, password: password, salt: salt)
-        print(secret, decryptedRes)
+        
+        let resAegisSecret = try JSONDecoder().decode(TestAegisSecret.self, from: encryptedRes)
+        
+        let decryptedRes = try Decrypt(secret: resAegisSecret.wallet[0].encrypted, password: password, salt: salt)
         XCTAssertEqual(decryptedRes, secret)
         
     }

@@ -43,15 +43,14 @@ public class Citadel {
     }
     
     @available(macOS 10.15, *)
-    public func store(payloads: [Data], key: Data) async throws {
+    public func store(payloads: [String], key: Data) async throws {
         guard payloads.count == forts.count else {
             throw NSError(domain: "citadel", code: 0, userInfo: [NSLocalizedDescriptionKey: "Payloads and Fort do not match"])
         }
         
-        let strKey = key.base64EncodedString()
         var responses = [DataTask<PutSecretResponse>]()
         for i in 0..<payloads.count {
-            let data = payloads[i].base64EncodedString()
+            let data = payloads[i]
             
             let response = createPutSecretRequest(fort: forts[i], data: data, overwrite: true);
             responses.append(response)
@@ -69,23 +68,19 @@ public class Citadel {
     }
     
     @available(macOS 10.15, *)
-    public func retrieve(key: Data) async -> [payload] {
-        let strKey = key.base64EncodedString()
-        
+    public func retrieve(key: Data) async -> [String] {
         var responses = [DataTask<GetSecretResponse>]()
         for fort in forts {
             let response = createGetSecretRequest(fort: fort)
             responses.append(response)
         }
 
-        var result: [payload] = []
+        var result: [String] = []
         for response in responses {
             let res = await response.result
             switch res {
             case .success(let r):
-                let encodedSecret = r.secret
-                let secret = Data(base64Encoded: encodedSecret)!
-                result.append(secret)
+                result.append(r.secret)
             case .failure(_):
                 continue
             }

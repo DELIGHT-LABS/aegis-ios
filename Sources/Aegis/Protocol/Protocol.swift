@@ -56,7 +56,7 @@ public func getProtocol(version: ProtocolVersion) throws -> Protocol {
     }
 }
 
-public func pack(version: ProtocolVersion, v: Any) throws -> Data {
+public func pack(version: ProtocolVersion, v: Any) throws -> String {
     var p = Payload()
     p.protocolVersion = version
     
@@ -66,11 +66,13 @@ public func pack(version: ProtocolVersion, v: Any) throws -> Data {
     
     let data = try JSONEncoder().encode(p)
     
-    return data
+    return data.base64EncodedString()
 }
 
-public func unpack(packet: Data) throws -> Any {
-    let p = try JSONDecoder().decode(Payload.self, from: packet)
+public func unpack(packet: String) throws -> Any {
+    let decoded = Data(base64Encoded: packet)!
+    
+    let p = try JSONDecoder().decode(Payload.self, from: decoded)
     
     let pc = try getProtocol(version: p.protocolVersion)
     

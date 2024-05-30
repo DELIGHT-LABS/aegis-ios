@@ -18,12 +18,12 @@ public struct NoCryptShare: Share, Codable {
         content = Data()
     }
     
-    public init(encodeData: Data) {
-        let share = try? JSONDecoder().decode(NoCryptShare.self, from: encodeData)
-        total = share?.total ?? 0;
-        threshold = share?.threshold ?? 0
-        content = share?.content ?? Data()
-    }
+     public init(encodeData: Data) {
+         let share = try? JSONDecoder().decode(NoCryptShare.self, from: encodeData)
+         total = share?.total ?? 0;
+         threshold = share?.threshold ?? 0
+         content = share?.content ?? Data()
+     }
     
     public func getAlgorithm() -> Algorithm {
         return NoCrypt().getName()

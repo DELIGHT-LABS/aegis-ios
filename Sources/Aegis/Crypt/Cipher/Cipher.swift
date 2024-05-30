@@ -24,7 +24,7 @@ struct CipherPacket: Codable {
 }
 
 @available(macOS 10.15, *)
-public func CipherEncrypt(version: CipherVersion, plainText: Secret, password: Data, salt: Data) throws -> Secret {
+public func CipherEncrypt(version: CipherVersion, plainText: Secret, password: Data, salt: Data) throws -> String {
     var packet: CipherPacket
     
     var encrypted: Secret
@@ -38,13 +38,18 @@ public func CipherEncrypt(version: CipherVersion, plainText: Secret, password: D
         throw NSError(domain: "cipher", code: 0,userInfo: [NSLocalizedDescriptionKey: "unsupported version"])
     }
     
-    return try JSONEncoder().encode(packet)
+    let packed = try JSONEncoder().encode(packet)
+    
+    return packed.base64EncodedString()
 }
 
 
 @available(macOS 10.15, *)
-public func CipherDecrypt(packet: Packet, password: Data, salt: Data) throws -> Secret {
-    let cipher = try JSONDecoder().decode(CipherPacket.self, from: packet)
+public func CipherDecrypt(packet: String, password: Data, salt: Data) throws -> Secret {
+    // Base64 decoding
+    let decoded = Data(base64Encoded: packet)!
+    
+    let cipher = try JSONDecoder().decode(CipherPacket.self, from: decoded)
     
     var decrypted: Secret
     switch cipher.version {

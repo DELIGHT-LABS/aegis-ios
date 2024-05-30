@@ -6,7 +6,7 @@ import Foundation
 public typealias payload = Data
 
 public class Aegis {
-    public var payloads: [payload]
+    public var payloads: [String]
     
     public init() {
         self.payloads = []
@@ -40,13 +40,13 @@ public extension Aegis {
         // Pack
         shares?.forEach { share in
             let packed = try? pack(version: pVersion, v: share)
-            aegis.payloads.append(packed ?? Data())
+            aegis.payloads.append(packed ?? "")
         }
         
         return aegis
     }
     
-    static func combineShares(payloads: [payload]) throws -> Secret {
+    static func combineShares(payloads: [String]) throws -> Secret {
         // Pre-verification
         if (payloads.isEmpty || payloads.count < numMinimumShares) {
             throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "not enough shares"])
@@ -80,7 +80,7 @@ public extension Aegis {
 }
 
 @available(macOS 10.15, *)
-public func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data, salt: Data) throws -> Packet {
+public func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data, salt: Data) throws -> String {
     let encrypted = try CipherEncrypt(version: cVersion, plainText: secret, password: password, salt: salt)
     
     // Verify
@@ -93,7 +93,7 @@ public func Encrypt(cVersion: CipherVersion, secret: Secret, password: Data, sal
 }
 
 @available(macOS 10.15, *)
-public func Decrypt(secret: Packet, password: Data, salt: Data) throws -> Secret {
+public func Decrypt(secret: String, password: Data, salt: Data) throws -> Secret {
     // Decrypt
     let decrypted = try CipherDecrypt(packet: secret, password: password, salt: salt)
     
