@@ -53,8 +53,8 @@ public extension ProtocolV1 {
     }
     
     func unpack(_ packet: Packet) throws -> Any {
-        let jsonData = packet as? Data
-        let v1 = try? JSONDecoder().decode(ProtocolV1.self, from: jsonData ?? Data())
+        let jsonData = packet as Data
+        let v1 = try? JSONDecoder().decode(ProtocolV1.self, from: jsonData)
         let cryptAlgorithm = v1?.cryptAlgorithm
         let sharePacket = v1?.sharePacket
         

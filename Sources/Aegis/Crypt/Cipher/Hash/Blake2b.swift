@@ -9,5 +9,5 @@ import Foundation
 import Blake2
 
 public func Blake2b(size: Int, message: Data) throws -> Data {
-    return try! Blake2b.hash(size: size, data: message)
+    return try Blake2b.hash(size: size, data: message)
 }

@@ -30,6 +30,6 @@ public extension CipherV1 {
         // Prepare key
         let hashedKey = try Blake2b(size: aesKeyLen, message: password + salt)
         // Encrypt
-        return try! AESdecryptGCM(cipherText: cipherText, key: hashedKey)
+        return try AESdecryptGCM(cipherText: cipherText, key: hashedKey)
     }
 }
