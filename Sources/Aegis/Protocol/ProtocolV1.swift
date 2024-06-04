@@ -13,7 +13,7 @@ public class ProtocolV1: Codable, Protocol {
     public var share: Share?
     
     public enum CodingKeys : String, CodingKey {
-        case cryptAlgorithm = "crypto_algorithm"
+        case cryptAlgorithm = "crypt_algorithm"
         case sharePacket = "share_packet"
     }
     
