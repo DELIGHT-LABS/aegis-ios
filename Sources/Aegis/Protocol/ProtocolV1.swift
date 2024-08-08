@@ -43,7 +43,6 @@ public extension ProtocolV1 {
         guard let share = v as? Share else { throw PackError.protocolArgumentMismatch}
         self.cryptAlgorithm = share.getAlgorithm().rawValue
         self.sharePacket = share.serialize()
-        self.share = share
         
         guard let data = try? JSONEncoder().encode(self) else {
             throw PackError.protocolArgumentMismatch

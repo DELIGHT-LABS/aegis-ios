@@ -14,15 +14,18 @@ public enum ProtocolVersion: String, Codable {
 }
 
 public struct Payload: Codable {
+    public var timestamp: Int64?
     public var protocolVersion: ProtocolVersion
     public var packet: Packet
     
     public enum CodingKeys: String, CodingKey {
         case protocolVersion = "protocol_version"
         case packet
+        case timestamp
     }
     
     public init() {
+        timestamp = 0
         protocolVersion = ProtocolVersion.Unspecified
         packet = Data()
     }
@@ -56,8 +59,9 @@ public func getProtocol(version: ProtocolVersion) throws -> Protocol {
     }
 }
 
-public func pack(version: ProtocolVersion, v: Any) throws -> String {
+public func pack(version: ProtocolVersion, v: Any, timestamp: Int64) throws -> String {
     var p = Payload()
+    p.timestamp = timestamp
     p.protocolVersion = version
     
     let pc = try getProtocol(version: p.protocolVersion)
@@ -69,8 +73,10 @@ public func pack(version: ProtocolVersion, v: Any) throws -> String {
     return data.base64EncodedString()
 }
 
-public func unpack(packet: String) throws -> Any {
-    let decoded = Data(base64Encoded: packet)!
+public func unpack(packet: String) throws -> (Any, Int64) {
+    guard let decoded = Data(base64Encoded: packet) else {
+        throw UnpackError.invalidPacket
+    }
     
     let p = try JSONDecoder().decode(Payload.self, from: decoded)
     
@@ -78,5 +84,5 @@ public func unpack(packet: String) throws -> Any {
     
     let v = try pc.unpack(p.packet)
     
-    return v
+    return (v, p.timestamp ?? 0)
 }
