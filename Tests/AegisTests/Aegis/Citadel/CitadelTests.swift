@@ -34,15 +34,15 @@ final class CitadelTests: XCTestCase {
         )
         
         
-        let token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ5b3VuZ0BkZWxpZ2h0bGFicy5pbyIsImV4cCI6MTc0Njc4NDczMCwianRpIjoiOGJmYTVkMjgtZjkxZi00YmQ3LTgxYTMtZGM4NjllYWVkNmYyIiwic3NvX3Byb3ZpZGVyIjoiR29vZ2xlIn0.ukJ0gYQsZRE8gktRtzxA6cfPH97zWzwLTmU8DODX9sOSwnLPJ0dFFssTbQm0WE-Cfl95COAAl6WwuQ6NSVEIDg"
+        let token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ4cGxhLWdhbWVzIiwic3ViIjoidGVzdEBkZWxpZ2h0bGFicy5pbyIsImV4cCI6MTc4NzMxMzM0OCwianRpIjoiYWFhYWFhYWEtYmJiYi1jY2NjLWRkZGQtZWVlZWVlZWVlZWVlIiwic3NvX3Byb3ZpZGVyIjoiR29vZ2xlIn0.CXMj447bNXTQwKgkNrwYzucPYH5uxYGQmuDbfb1F2eIZMvhenXa3zYn0PlI4N16BbuG9Riv9Q_LoN4-bUuPcBg"
         let urls = [
-            URL(string: "http://34.124.155.209:8080")!,
-            URL(string: "http://34.124.155.209:8081")!,
-            URL(string: "http://34.124.155.209:8082")!
+            URL(string: "https://citadel-fort1.develop.delightlabs.dev")!,
+            URL(string: "https://citadel-fort2.develop.delightlabs.dev")!,
+            URL(string: "https://citadel-fort3.develop.delightlabs.dev")!,
         ]
         let citadel = Citadel(token: token, urls: urls)
         
-        let uuid = Data("8bfa5d28-f91f-4bd7-81a3-dc869eaed6f2".bytes)
+        let uuid = Data("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee".bytes)
         
         try await citadel.store(payloads: aegis.payloads, key: uuid)
         
@@ -70,19 +70,19 @@ final class CitadelTests: XCTestCase {
         )
         
         
-        let token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ5b3VuZ0BkZWxpZ2h0bGFicy5pbyIsImV4cCI6MTc0Njc4NDczMCwianRpIjoiOGJmYTVkMjgtZjkxZi00YmQ3LTgxYTMtZGM4NjllYWVkNmYyIiwic3NvX3Byb3ZpZGVyIjoiR29vZ2xlIn0.ukJ0gYQsZRE8gktRtzxA6cfPH97zWzwLTmU8DODX9sOSwnLPJ0dFFssTbQm0WE-Cfl95COAAl6WwuQ6NSVEIDg"
+        let token = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ4cGxhLWdhbWVzIiwic3ViIjoidGVzdEBkZWxpZ2h0bGFicy5pbyIsImV4cCI6MTc4NzMxMzM0OCwianRpIjoiYWFhYWFhYWEtYmJiYi1jY2NjLWRkZGQtZWVlZWVlZWVlZWVlIiwic3NvX3Byb3ZpZGVyIjoiR29vZ2xlIn0.CXMj447bNXTQwKgkNrwYzucPYH5uxYGQmuDbfb1F2eIZMvhenXa3zYn0PlI4N16BbuG9Riv9Q_LoN4-bUuPcBg"
         let urls = [
-            URL(string: "http://34.124.155.209:8080")!,
-            URL(string: "http://34.124.155.209:8081")!,
-            URL(string: "http://34.124.155.209:8082")!
+            URL(string: "https://citadel-fort1.develop.delightlabs.dev")!,
+            URL(string: "https://citadel-fort2.develop.delightlabs.dev")!,
+            URL(string: "https://citadel-fort3.develop.delightlabs.dev")!,
         ]
         let citadel = Citadel(token: token, urls: urls)
         
-        let uuid = Data("8bfa5d28-f91f-4bd7-81a3-dc869eaed6f2".bytes)
+        let uuid = Data("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee".bytes)
         
         try await citadel.store(payloads: aegis.payloads, key: uuid)
         
-        citadel.forts[0].url = URL(string: "http://34.124.155.209:808")!
+        citadel.forts[0].url = URL(string: "http://1.2.3.4:5")!
         
         let res = await citadel.retrieve(key: uuid)
         XCTAssertEqual(2, res.count)
