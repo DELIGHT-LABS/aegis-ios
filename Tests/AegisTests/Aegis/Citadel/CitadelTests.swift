@@ -46,7 +46,7 @@ final class CitadelTests: XCTestCase {
         
         try await citadel.store(payloads: aegis.payloads, key: uuid)
         
-        let res = await citadel.retrieve(key: uuid)
+        let res = try await citadel.retrieve(key: uuid)
         XCTAssertEqual(3, res.count)
         
         let encryptedRes = try Aegis.combineShares(payloads: res)
@@ -84,7 +84,7 @@ final class CitadelTests: XCTestCase {
         
         citadel.forts[0].url = URL(string: "http://1.2.3.4:5")!
         
-        let res = await citadel.retrieve(key: uuid)
+        let res = try await citadel.retrieve(key: uuid)
         XCTAssertEqual(2, res.count)
         
     }

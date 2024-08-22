@@ -16,6 +16,7 @@ public struct Fort {
 public struct PutSecretPayload: Codable {
     public let overwrite: Bool
     public let secret: String
+    public let checksum: String
 }
 
 public struct PutSecretResponse: Codable {
@@ -29,6 +30,7 @@ public struct ErrorResponse: Codable {
 
 public struct GetSecretResponse: Codable {
     public let secret: String
+    public let checksum: String?
 }
 
 public class Citadel {
@@ -51,8 +53,9 @@ public class Citadel {
         var responses = [DataTask<PutSecretResponse>]()
         for i in 0..<payloads.count {
             let data = payloads[i]
+            let checksum = try Checksum(message: data)
             
-            let response = createPutSecretRequest(fort: forts[i], data: data, overwrite: true);
+            let response = createPutSecretRequest(fort: forts[i], data: data, checksum: checksum, overwrite: true);
             responses.append(response)
         }
         
@@ -68,7 +71,7 @@ public class Citadel {
     }
     
     @available(macOS 10.15, *)
-    public func retrieve(key: Data) async -> [String] {
+    public func retrieve(key: Data) async throws -> [String] {
         var responses = [DataTask<GetSecretResponse>]()
         for fort in forts {
             let response = createGetSecretRequest(fort: fort)
@@ -80,6 +83,13 @@ public class Citadel {
             let res = await response.result
             switch res {
             case .success(let r):
+                let checksum = try Checksum(message: r.secret)
+                if(checksum != r.checksum) {
+                    if(!(r.checksum == nil || r.checksum == "")) {
+                        throw NSError(domain: "citadel", code: 0, userInfo: [NSLocalizedDescriptionKey: "checksum mismatch"])
+                    }
+                }
+                
                 result.append(r.secret)
             case .failure(_):
                 continue
@@ -90,8 +100,8 @@ public class Citadel {
     }
     
     @available(macOS 10.15, *)
-    public func createPutSecretRequest(fort: Fort, data: String, overwrite: Bool) -> DataTask<PutSecretResponse> {
-        let payload = PutSecretPayload(overwrite: overwrite, secret: data)
+    public func createPutSecretRequest(fort: Fort, data: String, checksum: String, overwrite: Bool) -> DataTask<PutSecretResponse> {
+        let payload = PutSecretPayload(overwrite: overwrite, secret: data, checksum: checksum)
         
         let headers: HTTPHeaders = [
             .authorization(bearerToken: fort.token),
